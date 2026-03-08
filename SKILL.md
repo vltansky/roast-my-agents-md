@@ -63,8 +63,11 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 
 **NOT a sin — don't flag these:**
 - **CLAUDE.md symlinked to AGENTS.md** — this is the recommended pattern for Claude Code compatibility
-- **Same rules in `.cursor/rules/`, `.windsurfrules`, and `AGENTS.md`** — cross-tool duplication is intentional, each tool reads its own config file. Supporting multiple AI tools requires putting the same rules in each tool's config location.
+- **Same rules in AGENTS.md and `.windsurfrules`** — cross-tool duplication is intentional, each tool reads its own config
 - **Nested AGENTS.md in subdirectories** — scoped rules for different packages is good progressive disclosure, not duplication
+
+**Migration opportunity (mention, don't roast):**
+- **`.cursor/rules/` alongside AGENTS.md** — Cursor now supports AGENTS.md natively. If both exist with similar content, suggest migrating `.cursor/rules/` into AGENTS.md and deleting the old format. This is a cleanup opportunity, not a sin.
 
 ### Step 3: Token Tax Receipt
 
