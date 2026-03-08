@@ -96,9 +96,10 @@ Rate 1-10: Signal-to-Noise, Token Efficiency, Progressive Disclosure, Specificit
 - 7-8: Good — core rules inline, detailed guides in docs/, referenced on demand
 - 9-10: Exemplary — compact rules + pointers, all detailed content in docs/, scoped nested AGENTS.md in monorepos
 
-**Root size budget:**
-- Monorepo: <100 lines (compact map — loads for every package)
-- Single repo: <500 lines (more room, but still extract long guides to docs/)
+**Size budgets:**
+- Monorepo root: <100 lines (compact map — loads for every package)
+- Single repo root: <500 lines
+- Nested AGENTS.md (any): <500 lines (only loads when agent works in that directory)
 
 Then deliver the punchline: "But this is just my opinion. Want me to actually *prove* it? I can run your rules through A/B tests and show you which ones the model already knows without your help."
 
