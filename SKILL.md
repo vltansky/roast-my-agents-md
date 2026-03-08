@@ -56,9 +56,9 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 | **Identity prompts** | "You are an expert" — a horoscope, not an instruction. |
 | **Rules instead of feedback loops** | Tests, types, linters, CI can enforce this — prose can't. |
 | **Contradictory instructions** | Two conflicting rules = agent paralysis. |
-| **Bloated root** (>100 lines) | Every token loads every request. Root should be a compact map — pointers to `docs/` and nested AGENTS.md, not a monolith. |
+| **Bloated root in monorepo** (>100 lines) | In monorepos, root loads every request across all packages. Keep it as a compact map — pointers to `docs/` and nested AGENTS.md. Single-repo projects can go up to ~500 lines. |
 | **Monolith — no nested AGENTS.md** | One flat root file for a monorepo? Each package deserves scoped rules that only load when the agent works there. |
-| **Domain content in root instead of docs/** | Architecture notes, testing guides, API conventions belong in `docs/` — referenced from root, loaded on demand. |
+| **No progressive disclosure in any AGENTS.md** | Even in a single-repo project, a 400-line AGENTS.md should extract detailed guides to `docs/` and reference them. Progressive disclosure isn't just for monorepos. |
 | **Instruction budget overrun** (>150) | Every line past budget makes ALL lines weaker. |
 | **Vague advice** | "Follow best practices" costs tokens and changes nothing. |
 | **Style rules (not linter rules)** | Never send an LLM to do a linter's job. |
@@ -76,7 +76,7 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 ```
 TOKEN TAX RECEIPT
 Total lines:               [N]     Noise: [N] ([X]%)    Signal: [N] ([Y]%)
-Root AGENTS.md:            [N] lines (budget: <100)
+Root AGENTS.md:            [N] lines (budget: <100 monorepo / <500 single repo)
 Instruction count:         [N] / ~100 budget
 Nested AGENTS.md files:    [N] (should match package/directory count)
 Content in docs/:          [yes/no]
@@ -90,11 +90,15 @@ Recommendation:            Delete [N] lines. Keep [N]. Move [N] to docs/ or nest
 
 Rate 1-10: Signal-to-Noise, Token Efficiency, Progressive Disclosure, Specificity. Overall X/10.
 
-**Progressive Disclosure scoring:**
-- 1-3: Monolith — everything in one root file, no nesting, no docs/
-- 4-6: Partial — some nesting but root is still bloated, or docs/ exists but root doesn't reference it
-- 7-8: Good — lean root (<100 lines) as a map, domain content in docs/, scoped rules in nested AGENTS.md
-- 9-10: Exemplary — root is purely pointers + gotchas, every package has its own AGENTS.md, detailed guides live in docs/
+**Progressive Disclosure scoring** (applies to any AGENTS.md, not just monorepo roots):
+- 1-3: Monolith — everything in one file, no docs/ references, no depth
+- 4-6: Partial — some structure but detailed content still inline instead of in docs/
+- 7-8: Good — core rules inline, detailed guides in docs/, referenced on demand
+- 9-10: Exemplary — compact rules + pointers, all detailed content in docs/, scoped nested AGENTS.md in monorepos
+
+**Root size budget:**
+- Monorepo: <100 lines (compact map — loads for every package)
+- Single repo: <500 lines (more room, but still extract long guides to docs/)
 
 Then deliver the punchline: "But this is just my opinion. Want me to actually *prove* it? I can run your rules through A/B tests and show you which ones the model already knows without your help."
 
