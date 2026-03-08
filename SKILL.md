@@ -154,12 +154,11 @@ for f in $(find {project-root} -name "CLAUDE.md" -o -name "AGENTS.md" | grep -v 
   mv "$f" "$BACKUP_DIR/$REL_PATH"
 done
 
-# Rename user-level files:
+# User-level files: ASK the user first — these are outside the project.
+# "Found global configs that will contaminate baselines. OK to temporarily rename?"
 for f in ~/.claude/CLAUDE.md ~/.codex/AGENTS.md ~/.cursor/AGENTS.md; do
   [ -f "$f" ] && mv "$f" "${f}.bak"
 done
-
-# Rename memory dirs:
 find ~/.claude/projects -type d -name "memory" -exec sh -c 'mv "$1" "${1}_bak"' _ {} \; 2>/dev/null
 ```
 
@@ -179,6 +178,7 @@ for f in $(find "$BACKUP_DIR" -type f); do
   REL_PATH="${f#$BACKUP_DIR/}"
   mv "$f" "{project-root}/$REL_PATH"
 done
+# Restore user-level files (if renamed with user consent):
 for f in ~/.claude/CLAUDE.md.bak ~/.codex/AGENTS.md.bak ~/.cursor/AGENTS.md.bak; do
   [ -f "$f" ] && mv "$f" "${f%.bak}"
 done
