@@ -61,6 +61,11 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 | **Vague advice** | "Follow best practices" costs tokens and changes nothing. |
 | **Style rules (not linter rules)** | Never send an LLM to do a linter's job. |
 
+**NOT a sin — don't flag these:**
+- **CLAUDE.md symlinked to AGENTS.md** — this is the recommended pattern for Claude Code compatibility
+- **Same rules in `.cursor/rules/`, `.windsurfrules`, and `AGENTS.md`** — cross-tool duplication is intentional, each tool reads its own config file. Supporting multiple AI tools requires putting the same rules in each tool's config location.
+- **Nested AGENTS.md in subdirectories** — scoped rules for different packages is good progressive disclosure, not duplication
+
 ### Step 3: Token Tax Receipt
 
 ```
