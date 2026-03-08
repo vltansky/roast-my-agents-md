@@ -56,7 +56,9 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 | **Identity prompts** | "You are an expert" — a horoscope, not an instruction. |
 | **Rules instead of feedback loops** | Tests, types, linters, CI can enforce this — prose can't. |
 | **Contradictory instructions** | Two conflicting rules = agent paralysis. |
-| **Bloated root** (>100 lines) | Every token loads every request. |
+| **Bloated root** (>100 lines) | Every token loads every request. Root should be a compact map — pointers to `docs/` and nested AGENTS.md, not a monolith. |
+| **Monolith — no nested AGENTS.md** | One flat root file for a monorepo? Each package deserves scoped rules that only load when the agent works there. |
+| **Domain content in root instead of docs/** | Architecture notes, testing guides, API conventions belong in `docs/` — referenced from root, loaded on demand. |
 | **Instruction budget overrun** (>150) | Every line past budget makes ALL lines weaker. |
 | **Vague advice** | "Follow best practices" costs tokens and changes nothing. |
 | **Style rules (not linter rules)** | Never send an LLM to do a linter's job. |
@@ -74,15 +76,25 @@ Group by severity (invent fresh severity labels each time — not just "Critical
 ```
 TOKEN TAX RECEIPT
 Total lines:               [N]     Noise: [N] ([X]%)    Signal: [N] ([Y]%)
+Root AGENTS.md:            [N] lines (budget: <100)
 Instruction count:         [N] / ~100 budget
+Nested AGENTS.md files:    [N] (should match package/directory count)
+Content in docs/:          [yes/no]
 Tokens wasted/request:     ~[N]
 Monthly cost (50 req/day): ~$[N]
-Recommendation:            Delete [N] lines. Keep [N]. Save ~[N] tokens/request.
+Structure grade:           [monolith / partial / progressive disclosure]
+Recommendation:            Delete [N] lines. Keep [N]. Move [N] to docs/ or nested AGENTS.md.
 ```
 
 ### Step 4: Scoreboard (Static)
 
-Rate 1-10: Signal-to-Noise, Token Efficiency, Structure, Specificity. Overall X/10.
+Rate 1-10: Signal-to-Noise, Token Efficiency, Progressive Disclosure, Specificity. Overall X/10.
+
+**Progressive Disclosure scoring:**
+- 1-3: Monolith — everything in one root file, no nesting, no docs/
+- 4-6: Partial — some nesting but root is still bloated, or docs/ exists but root doesn't reference it
+- 7-8: Good — lean root (<100 lines) as a map, domain content in docs/, scoped rules in nested AGENTS.md
+- 9-10: Exemplary — root is purely pointers + gotchas, every package has its own AGENTS.md, detailed guides live in docs/
 
 Then deliver the punchline: "But this is just my opinion. Want me to actually *prove* it? I can run your rules through A/B tests and show you which ones the model already knows without your help."
 
@@ -219,9 +231,40 @@ Sentence examples:
 
 Present fix options:
 a) Delete guilty rules only (conservative)
-b) Delete guilty + restructure for progressive disclosure [recommended]
+b) Delete guilty + restructure for progressive disclosure **[recommended]**
 c) Full rewrite based on evidence
 d) Custom
+
+**Option (b) always includes this restructuring:**
+
+The ideal structure is a 3-level hierarchy:
+
+```
+project/
+├── AGENTS.md              # <100 lines — compact map, pointers, gotchas only
+├── CLAUDE.md -> AGENTS.md # symlink for Claude Code
+├── docs/
+│   ├── architecture.md    # how the system works
+│   ├── testing.md         # test patterns, fixtures, helpers
+│   └── conventions.md     # naming, patterns, style decisions
+├── packages/api/
+│   └── AGENTS.md          # API-specific rules (only loaded when working here)
+├── packages/app/
+│   └── AGENTS.md          # App-specific rules
+└── packages/functions/
+    └── AGENTS.md          # Functions-specific rules
+```
+
+**Root AGENTS.md** should be a compact map (<100 lines):
+- Project identity (one line: what this is)
+- Build/test/lint commands
+- Critical gotchas that apply everywhere
+- Pointers to `docs/` for details
+- That's it. Everything else goes deeper.
+
+**Nested AGENTS.md** files contain scoped rules that only load when the agent works in that directory. Package-specific conventions, framework quirks, local patterns.
+
+**docs/** contains detailed guides the agent reads on demand — architecture decisions, testing patterns, deployment workflows. Referenced from root, never auto-loaded.
 
 **STOP. Wait for user choice.** Then execute.
 
@@ -249,6 +292,9 @@ Apply the chosen fixes, then show before/after:
 | **The delta dunk** | "+3.8% improvement. 14 instruction files. 755 lines. That's 0.005% improvement per line." |
 | **The feedback loop test** | "12 lines about indent style. ESLint does this in 1 config line. And enforces it." |
 | **The budget counter** | "172 instructions. Budget is ~100. Every one past the limit makes ALL of them weaker." |
+| **The monolith roast** | "400 lines in one root file. That's not progressive disclosure, that's a ransom note." |
+| **The nesting nudge** | "Your packages/api has its own tsconfig, its own package.json, its own tests... but shares one AGENTS.md with the React app? Give it its own rules." |
+| **The docs/ test** | "This 80-line architecture section loads every single request. Move it to docs/architecture.md — the agent will read it when it needs it." |
 
 ## Edge Case: Actually Good
 
