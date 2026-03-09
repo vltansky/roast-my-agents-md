@@ -1,6 +1,6 @@
 # roast-my-agents-md
 
-Brutally honest AGENTS.md/CLAUDE.md review — backed by real A/B test evidence, not just opinions. Built on [Anthropic's skill-creator](https://github.com/anthropics/claude-code/tree/main/.claude/skills/skill-creator) eval framework.
+Brutally honest AGENTS.md/CLAUDE.md review — backed by real A/B test evidence, not just opinions. Built on [Anthropic's skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) eval framework.
 
 Most AGENTS.md roasts are vibes. This one brings receipts.
 
